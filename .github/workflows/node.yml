@@ -26,9 +26,6 @@ jobs:
           yarn clean
           yarn build
 
-      - name: 🧪 Test
-        run: yarn test
-
       - name: 📝 Document
         run: yarn doc
 
