@@ -5,10 +5,10 @@ Introspects [AWS](https://aws.amazon.com) [EC2](https://aws.amazon.com/ec2/) and
 ## Usage
 
 ```ts
-import { getEC2LocalIPv4 } from "@plato/aws-meta";
+import { getInstanceIPV4 } from "@plato/aws-meta";
 
 try {
-	const ip = await getEC2LocalIPv4();
+	const ip = await getInstanceIPV4();
 	// Do something with "ip"
 } catch (e) {
 	// Failed to get local IP
