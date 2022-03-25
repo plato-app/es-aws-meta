@@ -14,9 +14,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: 🔧 Install/Audit
-        run: |
-          yarn
-          yarn audit
+        run: yarn
 
       - name: 👕 Lint
         run: yarn lint
