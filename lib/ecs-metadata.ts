@@ -29,7 +29,7 @@ export interface ECSContainerMetadata {
 }
 
 /**
- * ECS task metadata
+ * ECS task metadata v3
  * @see https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-metadata-endpoint-v3.html
  */
 export interface ECSTaskMetadata {
@@ -62,4 +62,42 @@ export async function getECSTaskMetadata(): Promise<ECSTaskMetadata> {
 	}
 	const data = await fetch(`${endpoint}/task`);
 	return JSON.parse(data);
+}
+
+/** Environment variable storing the ECS metadata URI for v3 */
+const ECSContainerMetadataEnvV4 = "ECS_CONTAINER_METADATA_URI_V4";
+
+/** Get the IP for an ECS task running in Fargate **/
+export async function getECSTaskV4IP(): Promise<string> {
+	return getECSContainerMetadataV4().then((md) => {
+		if (md.Networks !== undefined && md.Networks.length < 1) {
+			throw new Error(`Container metadata did not contain any network information: ${md}`);
+		}
+
+		const addresses = md.Networks[0].IPv4Addresses;
+		if (Array.isArray(addresses)) {
+			if (addresses.length < 1) {
+				throw new Error("Container does not have any IP addresses....");
+			}
+			return addresses[0];
+		} else {
+			return addresses;
+		}
+
+	}).catch((e) => {throw new Error(`Could not get container IP from metadata: ${e.message}`)});
+}
+
+/** Get ECS task metadata */
+export async function getECSContainerMetadataV4(): Promise<ECSContainerMetadata> {
+	const endpoint = process.env[ECSContainerMetadataEnvV4];
+	if (endpoint === undefined) {
+		throw new Error(`ECS container metadata URI not found at ${ECSContainerMetadataEnvV4}`);
+	}
+	const data = await fetch(`${endpoint}/task`);
+	return JSON.parse(data);
+}
+
+/** Returns whether the running container environment is Fargate **/
+export function inFargateRuntime(): boolean {
+	return process.env[ECSContainerMetadataEnvV4] !== undefined;
 }
