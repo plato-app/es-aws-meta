@@ -1,6 +1,6 @@
 {
 	"name": "@plato/aws-meta",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Introspects meta for containers running inside of ECS/EC2.",
 	"keywords": [
 		"plato",
