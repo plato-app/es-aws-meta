@@ -70,8 +70,8 @@ const ECSContainerMetadataEnvV4 = "ECS_CONTAINER_METADATA_URI_V4";
 /** Get the IP for an ECS task running in Fargate **/
 export async function getECSTaskV4IP(): Promise<string> {
 	return getECSContainerMetadataV4().then((md) => {
-		if (md.Networks !== undefined && md.Networks.length < 1) {
-			throw new Error(`Container metadata did not contain any network information: ${md}`);
+		if (md.Networks === undefined || md.Networks.length < 1) {
+			throw new Error(`Container metadata did not contain any network information: ${JSON.stringify(md)}`);
 		}
 
 		const addresses = md.Networks[0].IPv4Addresses;
@@ -93,7 +93,7 @@ export async function getECSContainerMetadataV4(): Promise<ECSContainerMetadata>
 	if (endpoint === undefined) {
 		throw new Error(`ECS container metadata URI not found at ${ECSContainerMetadataEnvV4}`);
 	}
-	const data = await fetch(`${endpoint}/task`);
+	const data = await fetch(`${endpoint}`);
 	return JSON.parse(data);
 }
 
